@@ -22,7 +22,7 @@ services:
             - ./:/var/www/html
             - ./nginx:/etc/nginx/conf.d
         ports:
-            - "8080:80"
+            - "80"
         depends_on:
             - app
         networks:
