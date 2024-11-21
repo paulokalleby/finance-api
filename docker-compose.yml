@@ -1,0 +1,35 @@
+services:
+    app:
+        image: php:8.3-fpm
+        container_name: laravel_app
+        volumes:
+            - ./:/var/www/html
+        working_dir: /var/www/html
+        environment:
+            - APP_ENV=local
+            - APP_DEBUG=true
+            - APP_KEY=${APP_KEY}
+        networks:
+            - laravel_net
+        command: >
+            sh -c "apt-get update &&
+                   apt-get install -y libpq-dev libonig-dev libzip-dev zip unzip &&
+                   docker-php-ext-install pdo_mysql &&
+                   php-fpm"
+
+    webserver:
+        image: nginx:latest
+        container_name: laravel_webserver
+        volumes:
+            - ./:/var/www/html
+            - ./nginx:/etc/nginx/conf.d
+        ports:
+            - "8000:80"
+        depends_on:
+            - app
+        networks:
+            - laravel_net
+
+networks:
+    laravel_net:
+        driver: bridge
